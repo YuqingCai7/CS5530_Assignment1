@@ -1,0 +1,54 @@
+---
+title: "Frailty_Analysis"
+author: "Yuqing Cai"
+date: "2024-02-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Introduction
+
+This document demonstrates the basic understanding of the three stages of reproducible workflow. The data set used for this assignment includes 10 entries of participants with information on their height, weight, age, grip strength, and presence of frailty.The raw data can be viewed below:
+
+```{r rawF, echo=FALSE}
+raw_frailty <- read.csv("C:/Users/yuqin/Desktop/Frailty_Project/data_raw/raw_frailty.csv")
+knitr::kable(raw_frailty)
+```
+
+
+
+## Folder Structure
+
+To ensure the consistency of reproducible workflow, the folder structure for this project can seen as below:
+
+| -- Frailty Project
+|    | -- data_raw
+|    |    | -- raw_frailty.csv
+|    |    | -- README.txt
+|    | -- data_clean
+|    |    | -- clean_frailty.csv
+|    | -- results
+|    |    | -- frailty.analysis.HTML
+|    |    | -- frailty.analysis.Rmd
+|    | -- src
+|    |    | -- Frailty.r
+
+
+
+## Data Filtering
+To center our attention on the onset of frailty, I chose to filter out the entries with 'frailty' being 'Y', 
+```{r cleanF, echo=FALSE}
+clean_frailty <- read.csv("C:/Users/yuqin/Desktop/Frailty_Project/data_clean/clean_frailty.csv")
+knitr::kable(clean_frailty)
+```
+
+
+
+## Possible Analysis
+Since there is only 10 entries of data available on the topic of frailty, the analysis of this data will also be considered insignificant. However, if more data on this topic becomes available in the future, researchers can use similar method to filter out entries that appeal to their research, and group the entries with variables such as 'height', 'weight' in order to find additional relationships/correlations
+
+
