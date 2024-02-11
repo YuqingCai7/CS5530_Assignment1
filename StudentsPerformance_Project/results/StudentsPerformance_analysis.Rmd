@@ -1,0 +1,147 @@
+---
+title: "StudentsPerformance_analysis"
+author: "Yuqing Cai"
+date: "2024-02-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+```
+
+## Introduction
+
+This document presents an analysis of student performance data. The participants who scored 80% or higher on math, reading, and writing were selected and categorized based on their race/ethnicity groups. The students' eligibility for free/reduced lunch as well as the completion status of the test preparation course was considered by this study.
+
+
+
+## Participants filtering
+As mentioned previously; in this study, the participants who scored 80% or higher in math, reading, or writing will be selected. Here are the numbers of students who scored 80% or higher in math, reading, or writing according to their race/ethnicity:
+
+```{r StudentsPerformance_read, echo=FALSE}
+clean_StudentsPerformance <- read.csv("C:/Users/yuqin/Desktop/StudentsPerformance_Project/data_clean/clean_StudentsPerformance.csv")
+knitr::kable(clean_StudentsPerformance)
+```
+
+```{r StudentsPerformance_show, echo=FALSE}
+View(clean_StudentsPerformance)
+```
+
+
+## Math Score
+
+Based on the graph, we can see that group E has the highest amount of participants who scored 80% or higher on math, which is only slightly higher than the amount presented by group C and group D. We can also conclude from this data that group A does not have nearly as many individuals who scored 80% or higher on math in comparison to other groups. 
+
+```{r math, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+raw_StudentsPerformance <- read.csv("C:/Users/yuqin/Desktop/StudentsPerformance_Project/data_raw/raw_StudentsPerformance.csv")
+
+summary_data_math <- raw_StudentsPerformance %>%
+  filter(`math.score` >= 80) %>%
+  group_by(`race.ethnicity`) %>%
+  summarize(math_count = n())
+
+summary_data_writing <- raw_StudentsPerformance %>%
+  filter(`writing.score` >= 80) %>%
+  group_by(`race.ethnicity`) %>%
+  summarize(writing_count = n())
+
+summary_data_reading <- raw_StudentsPerformance %>%
+  filter(`reading.score` >= 80) %>%
+  group_by(`race.ethnicity`) %>%
+  summarize(reading_count = n())
+
+summary_data <- summary_data_math %>%
+  left_join(summary_data_writing, by = "race.ethnicity") %>%
+  left_join(summary_data_reading, by = "race.ethnicity")
+
+bar_width <- 0.20
+
+ggplot(summary_data, aes(x = `race.ethnicity`)) +
+  geom_bar(aes(y = math_count - bar_width/2, fill = "Math Score >= 80"), stat = "identity", width = bar_width, position = position_nudge(x = -bar_width)) +
+  #geom_bar(aes(y = writing_count - bar_width/2, fill = "Writing Score >= 80"), stat = "identity", width = bar_width) +
+  #geom_bar(aes(y = reading_count + bar_width/2, fill = "Reading Score >= 80"), stat = "identity", width = bar_width, position = position_nudge(x = bar_width)) +
+  labs(x = "Race/Ethnicity", y = "Number of Individuals",
+       title = "Number of Individuals with Course Score >= 80 by Race/Ethnicity") +
+  scale_fill_manual(values = c("Math Score >= 80" = "blue", "Writing Score >= 80" = "red", "Reading Score >= 80" = "green")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  guides(fill = guide_legend(title = "Category"))
+
+```
+
+
+# Writing
+We will also be conducting a similar kind of analysis from math scores, but this time, applying to writing scores instead. In this visualization, we can see an increase in the amount of participants who scored 80% or higher on reading in comparison to math. Similar to the last analysis, group A has the lowest amount of participants who scored 80% or higher on writing. On the other hand, group C has the highest amount of participants who achieved 80% or higher on their writing test.
+
+```{r Writing, echo=FALSE}
+ggplot(summary_data, aes(x = `race.ethnicity`)) +
+  geom_bar(aes(y = math_count - bar_width/2, fill = "Math Score >= 80"), stat = "identity", width = bar_width, position = position_nudge(x = -bar_width)) +
+  geom_bar(aes(y = writing_count - bar_width/2, fill = "Writing Score >= 80"), stat = "identity", width = bar_width) +
+  # geom_bar(aes(y = reading_count + bar_width/2, fill = "Reading Score >= 80"), stat = "identity", width = bar_width, position = position_nudge(x = bar_width)) +
+  labs(x = "Race/Ethnicity", y = "Number of Individuals",
+       title = "Number of Individuals with Course Score >= 80 by Race/Ethnicity") +
+  scale_fill_manual(values = c("Math Score >= 80" = "blue", "Writing Score >= 80" = "red", "Reading Score >= 80" = "green")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  guides(fill = guide_legend(title = "Category"))
+```
+
+
+## Reading
+The last academic score that will be compared is the reading score. As we can see, the amount of participants who scored 80% or higher on reading is very similar to the number of participants who achieved similar results in writing, but slightly higher than the number of participants that was gathered from the math scores analysis. Similar to the last result, group A holds the lowest amount of participants while group C remains the highest out of all groups.
+
+```{r reading, echo=FALSE}
+ggplot(summary_data, aes(x = `race.ethnicity`)) +
+  geom_bar(aes(y = math_count - bar_width/2, fill = "Math Score >= 80"), stat = "identity", width = bar_width, position = position_nudge(x = -bar_width)) +
+  geom_bar(aes(y = writing_count - bar_width/2, fill = "Writing Score >= 80"), stat = "identity", width = bar_width) +
+  geom_bar(aes(y = reading_count + bar_width/2, fill = "Reading Score >= 80"), stat = "identity", width = bar_width, position = position_nudge(x = bar_width)) +
+  labs(x = "Race/Ethnicity", y = "Number of Individuals",
+       title = "Number of Individuals with Course Score >= 80 by Race/Ethnicity") +
+  scale_fill_manual(values = c("Math Score >= 80" = "blue", "Writing Score >= 80" = "red", "Reading Score >= 80" = "green")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  guides(fill = guide_legend(title = "Category"))
+```
+
+## Test Preparation Course
+The previous analysis helped provide visualization regarding different ethnic groups' academic specialties and weaknesses; however, it is also necessary to consider whether any of these participants have completed any test preparation courses prior to the exam. Out of all the participants who scored 80% or higher in one of the exams; as we can see, close to 50% of participants who achieved 80% or higher on one of the exams have completed the test preparation course, which means that there is more people who did not complete the test preparation course but still achieved 80% or higher in one of the exams.
+
+
+```{r StudentsPerformance_tpc, echo=FALSE}
+raw_StudentsPerformance <- read.csv("C:/Users/yuqin/Desktop/StudentsPerformance_Project/data_raw/raw_StudentsPerformance.csv")
+
+high_score_students <- raw_StudentsPerformance %>%
+  filter(`math.score` >= 80 | `reading.score` >= 80 | `writing.score` >= 80)
+
+summary_data_prep_course <- high_score_students %>%
+  group_by(`test.preparation.course`) %>%
+  summarize(num_students = n())
+
+ggplot(summary_data_prep_course, aes(x = "", y = num_students, fill = `test.preparation.course`)) +
+  geom_bar(stat = "identity", width = 1) +  
+  coord_polar("y", start = 0) +  
+  labs(x = NULL, y = NULL, fill = "Test Preparation Course",  
+       title = "Number of Students with Score >= 80 by Test Preparation Completion") +
+  theme_void()
+
+```
+
+
+## Lunch option
+Lastly, the study is also interested in understanding the proportion of participants who understand free/reduced lunch versus standard lunch among all of the students who scored 80% or above in one of the exams. Based on the visualization, it is clear that the majority of participants who scored 80% or higher were using standard lunch, and with less than 100 participants who achieved a high score and were under free/reduced lunch. 
+
+```{r StudentsPerformance_lunch, echo=FALSE}
+summary_data_lunch <- high_score_students %>%
+  group_by(`lunch`) %>%
+  summarize(num_students = n())
+
+ggplot(summary_data_lunch, aes(x = "", y = num_students, fill = `lunch`)) +
+  geom_bar(stat = "identity", width = 1) +  
+  coord_polar("y", start = 0) +  
+  labs(x = NULL, y = NULL, fill = "Lunch",  
+       title = "Number of Students with Score >= 80 by Lunch Type") +
+  theme_void()
+```
+
